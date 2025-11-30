@@ -3,75 +3,281 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Age Calculator</title>
+<title>All-in-One Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f4f4f4;
-        padding: 20px;
-        text-align: center;
-    }
-    .box {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        max-width: 400px;
-        margin: auto;
-        box-shadow: 0 0 10px #ccc;
-    }
-    input {
-        width: 90%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: 1px solid #aaa;
-    }
-    button {
-        padding: 10px 20px;
-        border: none;
-        background: #007bff;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-    #result {
-        margin-top: 15px;
-        font-size: 20px;
-        font-weight: bold;
-    }
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f7fa;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background-color: #2f80ed;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
+
+  .sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .sidebar button {
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    padding: 15px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+    border-left: 5px solid transparent;
+  }
+
+  .sidebar button.active, .sidebar button:hover {
+    background-color: #1c60d0;
+    border-left: 5px solid #ffd700;
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .tool-container {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .tool-container h2 {
+    margin-top: 0;
+    color: #333;
+    text-align: center;
+  }
+
+  input, select, textarea, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+
+  button {
+    background-color: #2f80ed;
+    color: white;
+    font-weight: 600;
+    border: none;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #1c60d0;
+  }
+
+  #output {
+    margin-top: 15px;
+    font-weight: bold;
+    word-break: break-word;
+  }
+
+  @media screen and (max-width: 768px){
+    body { flex-direction: column; }
+    .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
+    .sidebar button { flex: 1 0 auto; border-left: none; border-bottom: 3px solid transparent; }
+    .sidebar button.active, .sidebar button:hover { border-bottom: 3px solid #ffd700; }
+  }
 </style>
 </head>
 <body>
 
-<h2>Age Calculator</h2>
+<div class="sidebar">
+  <h2>Tools</h2>
+  <button class="active" onclick="showTool('password', this)">Password Generator</button>
+  <button onclick="showTool('loan', this)">Loan Calculator</button>
+  <button onclick="showTool('bmi', this)">BMI Calculator</button>
+  <button onclick="showTool('emoji', this)">Emoji Converter</button>
+  <button onclick="showTool('word', this)">Word Counter</button>
+  <button onclick="showTool('currency', this)">Currency Converter</button>
+  <button onclick="showTool('qr', this)">QR Code Generator</button>
+  <button onclick="showTool('love', this)">Love Calculator</button>
+  <button onclick="showTool('ip', this)">IP Finder</button>
+  <button onclick="showTool('joke', this)">Random Joke</button>
+</div>
 
-<div class="box">
-    <input type="date" id="dob">
-    <button onclick="calculateAge()">Calculate Age</button>
-    <div id="result"></div>
+<div class="main">
+  <div class="tool-container" id="toolContent">
+    <!-- Tool content will load here -->
+  </div>
 </div>
 
 <script>
-function calculateAge() {
-    let dob = document.getElementById("dob").value;
-    if (!dob) {
-        document.getElementById("result").innerHTML = "Please enter your date of birth.";
-        return;
-    }
+const tools = {
+  password: `
+    <h2>Password Generator</h2>
+    <input type="number" id="passwordLength" value="12" min="4" max="64" placeholder="Password Length">
+    <button onclick="generatePassword()">Generate Password</button>
+    <div id="output"></div>
+    <button onclick="copyPassword()">Copy to Clipboard</button>
+  `,
+  loan: `
+    <h2>Loan Calculator</h2>
+    <input type="number" id="loanAmount" placeholder="Loan Amount">
+    <input type="number" id="loanRate" placeholder="Interest Rate (%)">
+    <input type="number" id="loanYears" placeholder="Years">
+    <button onclick="calculateLoan()">Calculate</button>
+    <div id="output"></div>
+  `,
+  bmi: `
+    <h2>BMI Calculator</h2>
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    <button onclick="calculateBMI()">Calculate BMI</button>
+    <div id="output"></div>
+  `,
+  emoji: `
+    <h2>Emoji Converter</h2>
+    <input type="text" id="emojiText" placeholder="Type text">
+    <button onclick="convertEmoji()">Convert to Emojis</button>
+    <div id="output"></div>
+  `,
+  word: `
+    <h2>Word Counter</h2>
+    <textarea id="wordText" rows="4" placeholder="Type text here"></textarea>
+    <button onclick="countWords()">Count Words</button>
+    <div id="output"></div>
+  `,
+  currency: `
+    <h2>Currency Converter</h2>
+    <input type="number" id="currencyAmount" placeholder="Amount">
+    <select id="currencyFrom">
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+      <option value="GBP">GBP</option>
+      <option value="NGN">NGN</option>
+    </select>
+    <select id="currencyTo">
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+      <option value="GBP">GBP</option>
+      <option value="NGN">NGN</option>
+    </select>
+    <button onclick="convertCurrency()">Convert</button>
+    <div id="output"></div>
+  `,
+  qr: `
+    <h2>QR Code Generator</h2>
+    <input type="text" id="qrText" placeholder="Enter text or URL">
+    <button onclick="generateQR()">Generate QR Code</button>
+    <canvas id="output"></canvas>
+  `,
+  love: `
+    <h2>Love Calculator</h2>
+    <input type="text" id="loveName1" placeholder="Name 1">
+    <input type="text" id="loveName2" placeholder="Name 2">
+    <button onclick="calculateLove()">Calculate Love %</button>
+    <div id="output"></div>
+  `,
+  ip: `
+    <h2>IP Finder</h2>
+    <button onclick="findIP()">Find My IP</button>
+    <div id="output"></div>
+  `,
+  joke: `
+    <h2>Random Joke</h2>
+    <button onclick="getJoke()">Get Joke</button>
+    <div id="output"></div>
+  `
+};
 
-    let birth = new Date(dob);
-    let today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
+function showTool(tool, btn){
+  document.getElementById('toolContent').innerHTML = tools[tool];
+  document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
 
-    let m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-        age--;
-    }
+// Initialize first tool
+showTool('password', document.querySelector('.sidebar button'));
 
-    document.getElementById("result").innerHTML = "Your Age: " + age + " years";
+// Tool functions
+function generatePassword() {
+  const length = document.getElementById('passwordLength').value;
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?";
+  let password = "";
+  for(let i=0;i<length;i++) password += charset[Math.floor(Math.random()*charset.length)];
+  document.getElementById('output').textContent = password;
+}
+function copyPassword() {
+  navigator.clipboard.writeText(document.getElementById('output').textContent)
+    .then(()=>alert("Password copied!"));
+}
+function calculateLoan() {
+  const P = parseFloat(document.getElementById('loanAmount').value);
+  const r = parseFloat(document.getElementById('loanRate').value)/100/12;
+  const n = parseInt(document.getElementById('loanYears').value)*12;
+  const payment = P*r/(1-Math.pow(1+r,-n));
+  document.getElementById('output').textContent = `Monthly Payment: ${payment.toFixed(2)}`;
+}
+function calculateBMI() {
+  const w = parseFloat(document.getElementById('weight').value);
+  const h = parseFloat(document.getElementById('height').value)/100;
+  document.getElementById('output').textContent = `BMI: ${(w/(h*h)).toFixed(2)}`;
+}
+function convertEmoji() {
+  const text = document.getElementById('emojiText').value;
+  document.getElementById('output').textContent = text.split('').map(c=>c===' '? ' ' : '😊').join('');
+}
+function countWords() {
+  const text = document.getElementById('wordText').value.trim();
+  document.getElementById('output').textContent = `Word Count: ${text?text.split(/\s+/).length:0}`;
+}
+const rates = {USD:1,EUR:1.1,GBP:1.25,NGN:750};
+function convertCurrency() {
+  const amt = parseFloat(document.getElementById('currencyAmount').value);
+  const from = document.getElementById('currencyFrom').value;
+  const to = document.getElementById('currencyTo').value;
+  document.getElementById('output').textContent = `${(amt/rates[from]*rates[to]).toFixed(2)} ${to}`;
+}
+function generateQR() {
+  const text = document.getElementById('qrText').value;
+  QRCode.toCanvas(document.getElementById('output'), text, {width:200});
+}
+function calculateLove() {
+  const percent = Math.floor(Math.random()*101);
+  document.getElementById('output').textContent = `Love Percentage: ${percent}% ❤️`;
+}
+function findIP() {
+  fetch('https://api.ipify.org?format=json')
+    .then(res=>res.json())
+    .then(data=>document.getElementById('output').textContent=`Your IP: ${data.ip}`)
+    .catch(()=>document.getElementById('output').textContent='Unable to get IP');
+}
+function getJoke() {
+  fetch('https://v2.jokeapi.dev/joke/Any?type=single')
+    .then(res=>res.json())
+    .then(data=>document.getElementById('output').textContent=data.joke)
+    .catch(()=>document.getElementById('output').textContent='Unable to get joke');
 }
 </script>
-
 </body>
 </html>

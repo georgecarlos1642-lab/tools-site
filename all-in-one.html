@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All-in-One Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  header {
+    background: #2d89ff;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+
+  header p {
+    margin-top: 10px;
+  }
+
+  #themeToggle {
+    margin-top: 15px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: white;
+    color: #2d89ff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  #themeToggle:hover { background:#eee; }
+
+  main {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+
+  .welcome {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .welcome h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  #toolSearch {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+
+  .tool-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+  }
+
+  .tool-buttons button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .tool-buttons button:hover {
+    transform: translateY(-5px);
+    background: #2d89ff;
+    color: white;
+  }
+
+  .tool-buttons button img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+  }
+
+  .tool-container {
+    margin-top: 40px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .tool-container.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  input, select, textarea, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+  button.main-btn {
+    background: #2d89ff;
+    color: white;
+    font-weight: 600;
+    border: none;
+    transition: 0.3s;
+  }
+
+  button.main-btn:hover {
+    background: #1b5fbf;
+  }
+
+  #output {
+    margin-top: 15px;
+    font-weight: bold;
+    word-break: break-word;
+  }
+
+  #backToTop {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 50%;
+    background: #2d89ff;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+    transition: 0.3s;
+  }
+
+  #backToTop:hover { background: #1b5fbf; }
+
+  #toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d89ff;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: none;
+    opacity: 0;
+    transition: 0.4s;
+  }
+
+  /* Dark mode */
+  body.dark-mode {
+    background: #1e1e2f;
+    color: #f0f0f0;
+  }
+  body.dark-mode header { background: linear-gradient(135deg,#4445c4,#1a4fcf); color:white; }
+  body.dark-mode #themeToggle { background:#4445c4; color:white; }
+  body.dark-mode .tool-buttons button { background:#2a2a3d; color:#f0f0f0; }
+  body.dark-mode .tool-buttons button:hover { background:#4445c4; color:white; }
+  body.dark-mode .tool-container { background:#2a2a3d; color:#f0f0f0; }
+  body.dark-mode input, body.dark-mode textarea, body.dark-mode select { background:#1e1e2f; color:#f0f0f0; border:1px solid #555; }
+  body.dark-mode button.main-btn { background:#4445c4; }
+  body.dark-mode button.main-btn:hover { background:#1a4fcf; }
+
+  @media(max-width: 600px){
+    .tool-buttons { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Welcome to Our Website</h1>
+  <p>We’re happy to help you with all your handy tools today!</p>
+  <button id="themeToggle">Toggle Dark Mode</button>
+</header>
+
+<main>
+  <div class="welcome">
+    <h2>Select a Tool:</h2>
+    <input type="text" id="toolSearch" placeholder="Search tools...">
+    <div class="tool-buttons">
+      <button onclick="showTool('password')"><img src="https://img.icons8.com/ios-filled/50/000000/password.png"/>Password Generator</button>
+      <button onclick="showTool('loan')"><img src="https://img.icons8.com/ios-filled/50/000000/money.png"/>Loan Calculator</button>
+      <button onclick="showTool('bmi')"><img src="https://img.icons8.com/ios-filled/50/000000/weight.png"/>BMI Calculator</button>
+      <button onclick="showTool('emoji')"><img src="https://img.icons8.com/ios-filled/50/000000/happy.png"/>Emoji Converter</button>
+      <button onclick="showTool('word')"><img src="https://img.icons8.com/ios-filled/50/000000/text.png"/>Word Counter</button>
+      <button onclick="showTool('currency')"><img src="https://img.icons8.com/ios-filled/50/000000/currency-exchange.png"/>Currency Converter</button>
+      <button onclick="showTool('qr')"><img src="https://img.icons8.com/ios-filled/50/000000/qr-code.png"/>QR Code Generator</button>
+      <button onclick="showTool('love')"><img src="https://img.icons8.com/ios-filled/50/000000/like.png"/>Love Calculator</button>
+      <button onclick="showTool('ip')"><img src="https://img.icons8.com/ios-filled/50/000000/ip-address.png"/>IP Finder</button>
+      <button onclick="showTool('joke')"><img src="https://img.icons8.com/ios-filled/50/000000/laugh.png"/>Random Joke API</button>
+    </div>
+  </div>
+
+  <div class="tool-container" id="toolContent">
+    <p style="text-align:center;">Select a tool above to get started.</p>
+  </div>
+</main>
+
+<button id="backToTop">⬆</button>
+<div id="toast"></div>
+
+<script>
+const tools = {
+  password: `<h2>Password Generator</h2>
+    <input type="number" id="passwordLength" value="12" min="4" max="64" placeholder="Password Length">
+    <button class="main-btn" onclick="generatePassword()">Generate Password</button>
+    <div id="output"></div>
+    <button class="main-btn" onclick="copyPassword()">Copy to Clipboard</button>`,
+  loan: `<h2>Loan Calculator</h2>
+    <input type="number" id="loanAmount" placeholder="Loan Amount">
+    <input type="number" id="loanRate" placeholder="Interest Rate (%)">
+    <input type="number" id="loanYears" placeholder="Years">
+    <button class="main-btn" onclick="calculateLoan()">Calculate</button>
+    <div id="output"></div>`,
+  bmi: `<h2>BMI Calculator</h2>
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    <button class="main-btn" onclick="calculateBMI()">Calculate BMI</button>
+    <div id="output"></div>`,
+  emoji: `<h2>Emoji Converter</h2>
+    <input type="text" id="emojiText" placeholder="Type text">
+    <button class="main-btn" onclick="convertEmoji()">Convert to Emojis</button>
+    <div id="output"></div>`,
+  word: `<h2>Word Counter</h2>
+    <textarea id="wordText" rows="4" placeholder="Type text here"></textarea>
+    <button class="main-btn" onclick="countWords()">Count Words</button>
+    <div id="output"></div>`,
+  currency: `<h2>Currency Converter</h2>
+    <input type="number" id="currencyAmount" placeholder="Amount">
+    <select id="currencyFrom"><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="NGN">NGN</option></select>
+    <select id="currencyTo"><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="NGN">NGN</option></select>
+    <button class="main-btn" onclick="convertCurrency()">Convert</button>
+    <div id="output"></div>`,
+  qr: `<h2>QR Code Generator</h2>
+    <input type="text" id="qrText" placeholder="Enter text or URL">
+    <button class="main-btn" onclick="generateQR()">Generate QR Code</button>
+    <canvas id="output"></canvas>`,
+  love: `<h2>Love Calculator</h2>
+    <input type="text" id="loveName1" placeholder="Name 1">
+    <input type="text" id="loveName2" placeholder="Name 2">
+    <button class="main-btn" onclick="calculateLove()">Calculate Love %</button>
+    <div id="output"></div>`,
+  ip: `<h2>IP Finder</h2>
+    <button class="main-btn" onclick="findIP()">Find My IP</button>
+    <div id="output"></div>`,
+  joke: `<h2>Random Joke</h2>
+    <button class="main-btn" onclick="getJoke()">Get Joke</button>
+    <div id="output"></div>`
+};
+
+function showTool(tool){
+  const container = document.getElementById('toolContent');
+  container.classList.remove('show');
+  setTimeout(()=>{container.innerHTML = tools[tool]; container.classList.add('show');},100);
+}
+
+// Tool functions
+function generatePassword(){const l=document.getElementById('passwordLength').value;const c="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?";let p="";for(let i=0;i<l;i++)p+=c[Math.floor(Math.random()*c.length)];document.getElementById('output').textContent=p;}
+function copyPassword(){navigator.clipboard.writeText(document.getElementById('output').textContent).then(()=>showToast("Password copied!"));}
+function calculateLoan(){const P=parseFloat(document.getElementById('loanAmount').value);const r=parseFloat(document.getElementById('loanRate').value)/100/12;const n=parseInt(document.getElementById('loanYears').value)*12;const payment=P*r/(1-Math.pow(1+r,-n));document.getElementById('output').textContent=`Monthly Payment: ${payment.toFixed(2)}`;}
+function calculateBMI(){const w=parseFloat(document.getElementById('weight').value);const h=parseFloat(document.getElementById('height').value)/100;document.getElementById('output').textContent=`BMI: ${(w/(h*h)).toFixed(2)}`;}
+function convertEmoji(){const t=document.getElementById('emojiText').value;document.getElementById('output').textContent=t.split('').map(c=>c===' '? ' ' : '😊').join('');}
+function countWords(){const t=document.getElementById('wordText').value.trim();document.getElementById('output').textContent=`Word Count: ${t?t.split(/\s+/).length:0}`;}
+const rates={USD:1,EUR:1.1,GBP:1.25,NGN:750};function convertCurrency(){const amt=parseFloat(document.getElementById('currencyAmount').value);const from=document.getElementById('currencyFrom').value;const to=document.getElementById('currencyTo').value;document.getElementById('output').textContent=`${(amt/rates[from]*rates[to]).toFixed(2)} ${to}`;}
+function generateQR(){const t=document.getElementById('qrText').value;QRCode.toCanvas(document.getElementById('output'),t,{width:200});}
+function calculateLove(){const percent=Math.floor(Math.random()*101);document.getElementById('output').textContent=`Love Percentage: ${percent}% ❤️`;}
+function findIP(){fetch('https://api.ipify.org?format=json').then(res=>res.json()).then(data=>document.getElementById('output').textContent=`Your IP: ${data.ip}`).catch(()=>document.getElementById('output').textContent='Unable to get IP');}
+function getJoke(){fetch('https://v2.jokeapi.dev/joke/Any?type=single').then(res=>res.json()).then(data=>document.getElementById('output').textContent=data.joke).catch(()=>document.getElementById('output').textContent='Unable to get joke');}
+
+// Dark Mode
+const toggleBtn=document.getElementById('themeToggle');if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark-mode');
+toggleBtn.onclick=()=>{document.body.classList.toggle('dark-mode');localStorage.setItem('theme',document.body.classList.contains('dark-mode')?'dark':'light');}
+
+// Back to Top
+const backToTop=document.getElementById('backToTop');
+window.onscroll=()=>{backToTop.style.display=document.documentElement.scrollTop>200?'block':'none';};
+backToTop.onclick=()=>{window.scrollTo({top:0,behavior:'smooth'});}
+
+// Toast
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';t.style.opacity='1';setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.style.display='none',400)},2000);}
+
+// Tool Search
+document.getElementById('toolSearch').addEventListener('input',function(){const f=this.value.toLowerCase();document.querySelectorAll('.tool-buttons button').forEach(btn=>{btn.style.display=btn.textContent.toLowerCase().includes(f)?'flex':'none';});});
+</script>
+</body>
+</html>
